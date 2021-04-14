@@ -500,7 +500,7 @@ class ColorPicker {
                 el.className = 'a-color-picker-palette-color';
                 el.style.backgroundColor = color;
                 el.setAttribute('data-color', color);
-                el.title = "wow";
+                el.title = "wowsss";
                 row.insertBefore(el, refElement);
                 this.palette[color] = true;
                 if (fire) {
