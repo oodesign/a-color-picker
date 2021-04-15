@@ -493,18 +493,18 @@ class ColorPicker {
                 break;
         }
         if (this.options.paletteEditable || palette.length > 0) {
-            const addColorToPalette = (color, refElement, fire) => {
+            const addColorToPalette = (color, name, refElement, fire) => {
                 // se il colore è già presente, non creo un nuovo <div> ma sposto quello esistente in coda
-                const el = row.querySelector('.a-color-picker-palette-color[data-color="' + color.color + '"]') ||
+                const el = row.querySelector('.a-color-picker-palette-color[data-color="' + color + '"]') ||
                     document.createElement('div');
                 el.className = 'a-color-picker-palette-color';
-                el.style.backgroundColor = color.color;
-                el.setAttribute('data-color', color.color);
-                el.title = color.name;
+                el.style.backgroundColor = color;
+                el.setAttribute('data-color', color);
+                el.title = name;
                 row.insertBefore(el, refElement);
                 this.palette[color] = true;
                 if (fire) {
-                    this.onPaletteColorAdd(color.color);
+                    this.onPaletteColorAdd(color);
                 }
             };
             const removeColorToPalette = (element, fire) => {
@@ -530,7 +530,7 @@ class ColorPicker {
             // solo i colori validi vengono aggiunti alla palette
             palette.map(c => parseColor(c.color, useAlphaInPalette ? 'rgbcss4' : 'hex'))
                 .filter(c => !!c)
-                .forEach(c => addColorToPalette(c));
+                .forEach(c => addColorToPalette(c, c.name));
             // in caso di palette editabile viene aggiunto un pulsante + che serve ad aggiungere il colore corrente
             if (this.options.paletteEditable) {
                 const el = document.createElement('div');
@@ -545,10 +545,10 @@ class ColorPicker {
                             removeColorToPalette(null, true);
                         } else if (useAlphaInPalette) {
                             // aggiungo il colore e triggero l'evento 'oncoloradd'
-                            addColorToPalette(parseColor([this.R, this.G, this.B, this.A], 'rgbcss4'), e.target, true);
+                            addColorToPalette(parseColor([this.R, this.G, this.B, this.A], 'rgbcss4'),"", e.target, true);
                         } else {
                             // aggiungo il colore e triggero l'evento 'oncoloradd'
-                            addColorToPalette(rgbToHex(this.R, this.G, this.B), e.target, true);
+                            addColorToPalette(rgbToHex(this.R, this.G, this.B),"", e.target, true);
                         }
                     } else if (/a-color-picker-palette-color/.test(e.target.className)) {
                         if (e.shiftKey) {
@@ -580,7 +580,7 @@ class ColorPicker {
     updatePalette(palette) {
         // elimino tutti i riferimenti all'attuale palette
         this.paletteRow.innerHTML = '';
-        this.palette = { };
+        this.palette = {};
         // se l'elemento contenitore della palette è stato rimosso (nel costruttore), lo reintegro
         if (!this.paletteRow.parentElement) {
             this.element.appendChild(this.paletteRow);
