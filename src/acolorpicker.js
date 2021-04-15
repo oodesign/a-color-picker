@@ -495,16 +495,16 @@ class ColorPicker {
         if (this.options.paletteEditable || palette.length > 0) {
             const addColorToPalette = (color, refElement, fire) => {
                 // se il colore è già presente, non creo un nuovo <div> ma sposto quello esistente in coda
-                const el = row.querySelector('.a-color-picker-palette-color[data-color="' + color + '"]') ||
+                const el = row.querySelector('.a-color-picker-palette-color[data-color="' + color.color + '"]') ||
                     document.createElement('div');
                 el.className = 'a-color-picker-palette-color';
-                el.style.backgroundColor = color;
-                el.setAttribute('data-color', color);
-                el.title = "hello2!";
+                el.style.backgroundColor = color.color;
+                el.setAttribute('data-color', color.color);
+                el.title = color.name;
                 row.insertBefore(el, refElement);
                 this.palette[color] = true;
                 if (fire) {
-                    this.onPaletteColorAdd(color);
+                    this.onPaletteColorAdd(color.color);
                 }
             };
             const removeColorToPalette = (element, fire) => {
@@ -528,7 +528,7 @@ class ColorPicker {
                 }
             };
             // solo i colori validi vengono aggiunti alla palette
-            palette.map(c => parseColor(c, useAlphaInPalette ? 'rgbcss4' : 'hex'))
+            palette.map(c => parseColor(c.color, useAlphaInPalette ? 'rgbcss4' : 'hex'))
                 .filter(c => !!c)
                 .forEach(c => addColorToPalette(c));
             // in caso di palette editabile viene aggiunto un pulsante + che serve ad aggiungere il colore corrente
