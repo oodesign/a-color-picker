@@ -493,44 +493,20 @@ class ColorPicker {
                 break;
         }
         if (this.options.paletteEditable || palette.length > 0) {
-            const addColorToPalette = (color, name, refElement, fire) => {
-                // se il colore è già presente, non creo un nuovo <div> ma sposto quello esistente in coda
-                const el = row.querySelector('.a-color-picker-palette-color[data-color="' + color + '"]') ||
+            const addColorToPalette = (color, refElement, fire) => {
+                let colorRGB = parseColor(color.color, useAlphaInPalette ? 'rgbcss4' : 'hex')
+                const el = row.querySelector('.a-color-picker-palette-color[data-color="' + colorRGB + '"]') ||
                     document.createElement('div');
                 el.className = 'a-color-picker-palette-color';
-                el.style.backgroundColor = color;
-                el.setAttribute('data-color', color);
-                el.title = name;
+                el.style.backgroundColor = colorRGB;
+                el.setAttribute('data-color', colorRGB);
+                el.title = color.name;
                 row.insertBefore(el, refElement);
                 this.palette[color] = true;
-                if (fire) {
-                    this.onPaletteColorAdd(color);
-                }
             };
-            const removeColorToPalette = (element, fire) => {
-                // se element è nullo elimino tutti i colori
-                if (element) {
-                    row.removeChild(element);
-                    this.palette[element.getAttribute('data-color')] = false;
-                    if (fire) {
-                        this.onPaletteColorRemove(element.getAttribute('data-color'));
-                    }
-                } else {
-                    row.querySelectorAll('.a-color-picker-palette-color[data-color]').forEach(el => {
-                        row.removeChild(el);
-                    });
-                    Object.keys(this.palette).forEach(k => {
-                        this.palette[k] = false;
-                    });
-                    if (fire) {
-                        this.onPaletteColorRemove();
-                    }
-                }
-            };
+            
             // solo i colori validi vengono aggiunti alla palette
-            palette.map(c => parseColor(c.color, useAlphaInPalette ? 'rgbcss4' : 'hex'))
-                .filter(c => !!c)
-                .forEach(c => addColorToPalette(c, c.name));
+            palette.forEach(c => addColorToPalette(c));
             // in caso di palette editabile viene aggiunto un pulsante + che serve ad aggiungere il colore corrente
             if (this.options.paletteEditable) {
                 const el = document.createElement('div');
